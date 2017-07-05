@@ -7,6 +7,9 @@
 #kdiff3 ignore
 *.orig
 
+#maven
+target/
+
 #eclipse ignore
 .settings/
 .project
