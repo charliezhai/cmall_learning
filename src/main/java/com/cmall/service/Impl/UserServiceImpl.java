@@ -34,7 +34,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         user.setPassword(StringUtils.EMPTY);
-        return ServerResponse.createBySuccessmsg("登录成功");
+        return ServerResponse.createBySuccess("登录成功",user);
 
     }
 
@@ -135,10 +135,10 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.createByErrorMessage("修改密码失败");
     }
 
-    public ServerResponse<String> resetPassword(String passworOld,String passwordNew,User user){
+    public ServerResponse<String> resetPassword(String passwordOld,String passwordNew,User user){
         //防止横向越权，要校验一下这个用户的旧密码，一定要指定是这个用户
         //因为要查询一个count(1)，如果不指定id，那么查的结果就是true了
-        int resultCount = userMapper.checkPassword(MD5util.MD5EncodeUtf8(passworOld),user.getId());
+        int resultCount = userMapper.checkPassword(MD5util.MD5EncodeUtf8(passwordOld),user.getId());
         if(resultCount == 0){
             return ServerResponse.createByErrorMessage("旧密码错误");
         }
@@ -178,6 +178,18 @@ public class UserServiceImpl implements IUserService {
         }
         user.setPassword(StringUtils.EMPTY);//密码置空
         return ServerResponse.createBySuccess(user);
+    }
+
+    /**
+     * 校验是否是管理员
+     * @param user
+     * @return
+     */
+    public ServerResponse checkAdminRole(User user){
+        if(user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN){
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
     }
 
 

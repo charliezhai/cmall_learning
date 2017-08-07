@@ -15,7 +15,7 @@ import com.cmall.pojo.User;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/user/")
 public class UserController {
 
     @Autowired
@@ -44,7 +44,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value="login.do",method= RequestMethod.POST)
+    @RequestMapping(value="logout.do",method= RequestMethod.POST)
     @ResponseBody()
     public ServerResponse<String> logout(HttpSession session){
         session.removeAttribute(Const.CURRENT_USER);
@@ -62,6 +62,12 @@ public class UserController {
         return iUserService.register(user);
     }
 
+    /**
+     * 检查用户名是否有效
+     * @param str
+     * @param type
+     * @return
+     */
     @RequestMapping(value="check_valid.do",method= RequestMethod.POST)
     @ResponseBody()
     //防止恶意用户通过接口调用注册接口，校验用户名和email是否存在，点击完用户名输入框后调用一个校验接口
