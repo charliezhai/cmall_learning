@@ -69,7 +69,7 @@ public class CategoryServiceImpl implements ICategoryService{
     }
 
     //递归查询本节点及孩子节点的Id
-    public ServerResponse selectCategoryAndChildrenById(Integer categoryId){
+    public ServerResponse<List<Integer>> selectCategoryAndChildrenById(Integer categoryId){
         Set<Category> categorySet = Sets.newHashSet();
         findChildrenCategory(categorySet,categoryId);
 

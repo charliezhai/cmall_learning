@@ -8,42 +8,22 @@
       <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="subtitle" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="main_image" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sub_images" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="detail" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="stock" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.cmall.pojo.Product" >
-    <constructor >
-      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="category_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="subtitle" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="main_image" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="detail" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
-      <arg column="stock" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="sub_image" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, category_id, name, subtitle, main_image, detail, price, stock, status, create_time, 
-    update_time
+    id, category_id, name, subtitle, main_image, sub_images, detail, price, stock, status,
+    create_time, update_time
   </sql>
-  <sql id="Blob_Column_List" >
-    sub_image
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from cmall_product
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -52,16 +32,16 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.cmall.pojo.Product" >
-    insert into cmall_product (id, category_id, name, 
-      subtitle, main_image, detail, 
-      price, stock, status, 
-      create_time, update_time, sub_image
-      )
-    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{subtitle,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, 
-      #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      now(), now(), #{subImage,jdbcType=LONGVARCHAR}
-      )
+    insert into cmall_product (id, category_id, name,
+    subtitle, main_image, sub_images,
+    detail, price, stock,
+    status, create_time, update_time
+    )
+    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+    #{subtitle,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, #{subImages,jdbcType=VARCHAR},
+    #{detail,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
+    #{status,jdbcType=INTEGER}, now(), now()
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.cmall.pojo.Product" >
     insert into cmall_product
@@ -81,6 +61,9 @@
       <if test="mainImage != null" >
         main_image,
       </if>
+      <if test="subImages != null" >
+        sub_images,
+      </if>
       <if test="detail != null" >
         detail,
       </if>
@@ -99,9 +82,6 @@
       <if test="updateTime != null" >
         update_time,
       </if>
-      <if test="subImage != null" >
-        sub_image,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -118,6 +98,9 @@
       </if>
       <if test="mainImage != null" >
         #{mainImage,jdbcType=VARCHAR},
+      </if>
+      <if test="subImages != null" >
+        #{subImages,jdbcType=VARCHAR},
       </if>
       <if test="detail != null" >
         #{detail,jdbcType=VARCHAR},
@@ -137,9 +120,6 @@
       <if test="updateTime != null" >
         now(),
       </if>
-      <if test="subImage != null" >
-        #{subImage,jdbcType=LONGVARCHAR},
-      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.cmall.pojo.Product" >
@@ -157,6 +137,9 @@
       <if test="mainImage != null" >
         main_image = #{mainImage,jdbcType=VARCHAR},
       </if>
+      <if test="subImages != null" >
+        sub_images = #{subImages,jdbcType=VARCHAR},
+      </if>
       <if test="detail != null" >
         detail = #{detail,jdbcType=VARCHAR},
       </if>
@@ -173,41 +156,64 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        now(),
-      </if>
-      <if test="subImage != null" >
-        sub_image = #{subImage,jdbcType=LONGVARCHAR},
+        update_time = now(),
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cmall.pojo.Product" >
-    update cmall_product
-    set category_id = #{categoryId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      subtitle = #{subtitle,jdbcType=VARCHAR},
-      main_image = #{mainImage,jdbcType=VARCHAR},
-      detail = #{detail,jdbcType=VARCHAR},
-      price = #{price,jdbcType=DECIMAL},
-      stock = #{stock,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = now(),
-      sub_image = #{subImage,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.cmall.pojo.Product" >
     update cmall_product
     set category_id = #{categoryId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      subtitle = #{subtitle,jdbcType=VARCHAR},
-      main_image = #{mainImage,jdbcType=VARCHAR},
-      detail = #{detail,jdbcType=VARCHAR},
-      price = #{price,jdbcType=DECIMAL},
-      stock = #{stock,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = now()
+    name = #{name,jdbcType=VARCHAR},
+    subtitle = #{subtitle,jdbcType=VARCHAR},
+    main_image = #{mainImage,jdbcType=VARCHAR},
+    sub_images = #{subImages,jdbcType=VARCHAR},
+    detail = #{detail,jdbcType=VARCHAR},
+    price = #{price,jdbcType=DECIMAL},
+    stock = #{stock,jdbcType=INTEGER},
+    status = #{status,jdbcType=INTEGER},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="selectList" resultMap="BaseResultMap" >
+    SELECT
+    <include refid="Base_Column_List"/>
+    from cmall_product
+    ORDER BY id asc
+  </select>
+
+
+  <select id="selectByNameAndProductId" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from cmall_product
+    <where>
+      <if test="productName != null">
+        and name like #{productName}
+      </if>
+      <if test="productId != null">
+        and id = #{productId}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByNameAndCategoryIds" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"></include>
+    from cmall_product
+    where status = 1
+    <if test="productName != null">
+      and name like #{productName}
+    </if>
+    <if test="categoryIdList != null" >
+      and category_id in
+      <foreach item="item" index="index" open="(" separator="," close=")" collection="categoryIdList">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
 </mapper>
