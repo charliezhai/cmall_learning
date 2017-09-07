@@ -116,4 +116,54 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectCartByUserIdProductId" resultMap="BaseResultMap" parameterType="map">
+    SELECT 
+    <include refid="Base_Column_List"/>
+    from cmall_cart
+    where user_Id = #{userId}
+    and product_Id = #{productId}
+  </select>
+  
+  <select id="selectCartByUserId" resultMap="BaseResultMap" parameterType="int">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cmall_cart
+    where user_id = #{userId}
+  </select>
+
+  <select id="selectCartProductStatusCheckedByUserId" resultType="int" parameterType="int">
+    <!--查看购物车里有没有未勾选的，未勾选的数量为0说明是全选-->
+    SELECT
+    count(1) from cmall_cart
+    WHERE checked = 0 and user_id = #{userId}
+  </select>
+  
+  <delete id="deleteByUserIdAndProductIds" parameterType="map">
+    delete from cmall_cart
+    WHERE user_id = #{userId}
+    <if test="productIdList!=null">
+      and product_id in
+      <foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+  </delete>
+
+  <update id="checkedOrUncheckedProduct" parameterType="map">
+    update cmall_cart
+    set checked = #{checked},
+    update_time = now()
+    where user_id = #{userId}
+    <if test = "productId!=null">
+      and product_id = #{productId}
+    </if>
+  </update>
+  
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+    <!--select sum(quantity) as count from cmall_cart where user_id = #{userId} 这样写有隐患，当user_id为空时sum为空，不能赋给基本类型int-->
+    select IFNULL(sum(quantity),0) as count from cmall_cart
+    where user_id = #{userId}
+  </select>
 </mapper>
