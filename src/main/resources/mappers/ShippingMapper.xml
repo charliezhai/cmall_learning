@@ -31,7 +31,8 @@
     delete from cmall_shipping
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cmall.pojo.Shipping" >
+  <insert id="insert" parameterType="com.cmall.pojo.Shipping" useGeneratedKeys="true" keyProperty="id">
+  <!--userGeneratedKeys用于自动生成主键，没有就不会自动生成；keyProperty是对应的字段即id，保证insert之后id马上就有了值-->
     insert into cmall_shipping (id, user_id, receive_name, 
       receive_phone, receive_mobile, receive_province, 
       receive_city, receive_districct, receive_address, 
@@ -176,4 +177,43 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <delete id="deleteByShippingIdAndUserId" parameterType="map">
+    delete from cmall_shipping
+    WHERE
+    id = #{shippingId}
+    and user_id = #{userId}
+  </delete>
+
+  <update id="updateByShipping" parameterType="com.cmall.pojo.Shipping">
+    update cmall_shipping
+    set
+      receive_name = #{receiveName,jdbcType=VARCHAR},
+      receive_phone = #{receivePhone,jdbcType=VARCHAR},
+      receive_mobile = #{receiveMobile,jdbcType=VARCHAR},
+      receive_province = #{receiveProvince,jdbcType=VARCHAR},
+      receive_city = #{receiveCity,jdbcType=VARCHAR},
+      receive_districct = #{receiveDistricct,jdbcType=VARCHAR},
+      receive_address = #{receiveAddress,jdbcType=VARCHAR},
+      receive_zip = #{receiveZip,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = now()
+    where id = #{id,jdbcType=INTEGER}
+    and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByShippingIdUserId" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from cmall_shipping
+    where id=#{shippingId}
+    and user_id=#{userId}
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from cmall_shipping
+    where user_id=#{userId}
+  </select>
 </mapper>
